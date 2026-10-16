@@ -4,7 +4,7 @@ INVENTORY_FILE = "inventory.txt"
 def display_menu():
     """Displays all menu options for user to choose from"""
     
-    print("Please enter an option from the following list: \n")
+    print("\nPlease enter an option from the following list: \n")
     print("\t--Inventory Manager--\n")
     print("1. View current inventory")
     print("2. Add item")
@@ -39,10 +39,24 @@ def load_inventory(filename):
     return items # return list of dictionaries
 
 def save_inventory(inventory, filename):
-    pass
-
+    """Save all changes to a text file."""
+    with open(filename, "w") as file:
+        for item in inventory:
+            keys = list(item)
+            for keys in item:
+                if keys == "quantity":
+                    file.write(item.get(keys))
+                else:
+                    file.write(item.get(keys), "|", end="")
+    
 def view_inventory(inventory):
-    pass
+    if not inventory:
+        print("No inventory items found.")
+        return
+    
+    for number, item in enumerate(inventory, start=1):
+        print(f"{number}. {item.get('name')} | {item.get('category')} | Quantity: {item.get('quantity')}")
+
 
 def add_item(inventory):
     pass
@@ -60,7 +74,7 @@ def display_summary(inventory):
     pass
 
 def main():
-    items = load_inventory(INVENTORY_FILE) # load inventory.txt
+    inventory = load_inventory(INVENTORY_FILE) # load inventory.txt
 
     # loop display menu until user chooses exit option
     while True:
@@ -69,7 +83,7 @@ def main():
 
         match option: # match user option
             case "1":
-                print("view inventory")
+                view_inventory(inventory)
             case "2":
                 print("add item")
             case "3":
