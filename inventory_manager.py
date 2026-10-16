@@ -40,14 +40,10 @@ def load_inventory(filename):
 
 def save_inventory(inventory, filename):
     """Save all changes to a text file."""
+    new_item = ""
     with open(filename, "w") as file:
         for item in inventory:
-            keys = list(item)
-            for keys in item:
-                if keys == "quantity":
-                    file.write(item.get(keys))
-                else:
-                    file.write(item.get(keys), "|", end="")
+            file.write(f"{item.get("name")}|{item.get("category")}|{item.get("quantity")}\n")
     
 def view_inventory(inventory):
     if not inventory:
@@ -57,9 +53,66 @@ def view_inventory(inventory):
     for number, item in enumerate(inventory, start=1):
         print(f"{number}. {item.get('name')} | {item.get('category')} | Quantity: {item.get('quantity')}")
 
-
 def add_item(inventory):
-    pass
+    i = 0
+    name = ""
+    category = ""
+    quantity = ""
+    new_item = {}
+
+    while i < 4:
+        match i:
+            case 0:
+                name = input("Enter item name: ")
+                if not name: 
+                    print("Please enter item name")
+                elif name.__contains__("|"):
+                    print("Item name cannot contain '|'")
+                else:
+                    new_item["name"] = name.casefold()
+                    i = 1
+            case 1:
+                category = input("Enter item category: ")
+                if not category:
+                    print("Please enter item category")
+                elif category.__contains__("|"):
+                    print("Item category cannot contain '|'")
+                else:
+                    new_item["category"] = category
+                    i = 2
+            case 2:
+                quantity = input("Enter item quantity: ")
+                if not quantity:
+                    print("Please enter item quantity")
+                else:
+                    i = 3
+            case 3:
+                try:
+                    quantity = int(quantity)
+                    if quantity < 0:
+                        print("Please enter a positive quantity")
+                    else:
+                        new_item["quantity"] = quantity
+                        i = 4
+                        break
+                        
+                except TypeError:
+                    print("Please enter a number")
+                except ValueError:
+                    print("Please enter an integer")
+                finally:
+                    i = 2
+            case _:
+                i = 5
+    for item in inventory:
+        item_name = item.get("name")
+        if item_name.casefold() == name:
+            print("Item already exists in inventory")
+            return
+
+    inventory.append(new_item)
+    print(f"{name} successfully added to inventory.")
+
 
 def update_quantity(inventory):
     pass
@@ -75,7 +128,6 @@ def display_summary(inventory):
 
 def main():
     inventory = load_inventory(INVENTORY_FILE) # load inventory.txt
-
     # loop display menu until user chooses exit option
     while True:
         display_menu()
@@ -85,7 +137,8 @@ def main():
             case "1":
                 view_inventory(inventory)
             case "2":
-                print("add item")
+                add_item(inventory)
+                save_inventory(inventory, INVENTORY_FILE)
             case "3":
                 print("update item")
             case "4":
