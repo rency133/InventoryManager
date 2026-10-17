@@ -152,9 +152,27 @@ def update_quantity(inventory):
 
     print(f"{item.get("name")} updated quantity to {item.get("quantity")}")
 
-    
 def remove_item(inventory):
-    pass
+    if not inventory:
+        print("No inventory items found.")
+        return
+    
+    print("\nPlease enter the number of the item you wish to remove from the following list: \n")
+    view_inventory(inventory)
+    choice = input("Your choice: ")
+    try:
+        choice = int(choice)
+        if choice < 0 or choice > len(inventory):
+            raise ValueError("Please enter a number associated with an item.")
+    except TypeError:
+        print("Please enter a number.")
+        return
+    except ValueError as e:
+        print(e)
+        return
+
+    removed_item = inventory.pop(choice - 1)
+    print(f"\nRemoved {removed_item.get("name")} from inventory.")
 
 def search_inventory(inventory):
     pass
@@ -179,7 +197,8 @@ def main():
                 update_quantity(inventory)
                 save_inventory(inventory, INVENTORY_FILE)
             case "4":
-                print("remove item")
+                remove_item(inventory)
+                save_inventory(inventory, INVENTORY_FILE)
             case "5": 
                 print("search inventory")
             case "6":
