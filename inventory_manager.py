@@ -49,7 +49,8 @@ def view_inventory(inventory):
     if not inventory:
         print("No inventory items found.")
         return
-    
+
+    print("\n\t--Current Inventory List--\n")
     for number, item in enumerate(inventory, start=1):
         print(f"{number}. {item.get('name')} | {item.get('category')} | Quantity: {item.get('quantity')}")
 
@@ -113,10 +114,45 @@ def add_item(inventory):
     inventory.append(new_item)
     print(f"{name} successfully added to inventory.")
 
-
 def update_quantity(inventory):
-    pass
+    if not inventory:
+        print("No inventory items found.")
+        return
+    
+    print("\nPlease enter the number of the item you wish to update from the following list: \n")
+    view_inventory(inventory)
+    choice = input("Your choice: ")
+    try:
+        choice = int(choice)
+        if choice < 0 or choice > len(inventory):
+            raise ValueError("Please enter a number associated with an item.")
+    except TypeError:
+        print("Please enter a number.")
+        return
+    except ValueError as e:
+        print(e)
+        return
 
+    item = inventory[choice - 1]
+    print(f"\nItem chosen: {item.get("name")}\nCurrent Quantity: {item.get("quantity")}\n")
+    new_quantity = input("Please enter the updated quantity: ")
+    try:
+        new_quantity = int(new_quantity)
+        if new_quantity < 0:
+            print("Please enter a positive quantity")
+        else:
+            item["quantity"] = new_quantity
+                
+    except TypeError:
+            print("Please enter a number")
+            return
+    except ValueError:
+        print("Please enter an integer")
+        return
+
+    print(f"{item.get("name")} updated quantity to {item.get("quantity")}")
+
+    
 def remove_item(inventory):
     pass
 
@@ -140,7 +176,8 @@ def main():
                 add_item(inventory)
                 save_inventory(inventory, INVENTORY_FILE)
             case "3":
-                print("update item")
+                update_quantity(inventory)
+                save_inventory(inventory, INVENTORY_FILE)
             case "4":
                 print("remove item")
             case "5": 
